@@ -143,10 +143,17 @@ button:hover {
 
 </style>
 <body>
+{% if messages %}
+    <script>
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
+    </script>
+{% endif %}
 <div class="container">
   <div class="box">
     <h1>Add Department</h1>
-    <form action="" method="POST">
+    <form action="" method="POST" id="departmentForm">
       {% csrf_token %}
       <div class="form-columns">
         <div class="form-column">
@@ -165,7 +172,7 @@ button:hover {
         </div>
       </div>
       <div class="button-wrapper">
-        <button type="reset">Reset</button>
+        <button type="button" onclick="document.getElementById('departmentForm').reset();">Reset</button>
         <button type="submit">Submit</button>
       </div>
     </form>

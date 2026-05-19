@@ -1,28 +1,23 @@
-from .models import Task, FinishedTask
-from .models import EmployeeSignUp
 from django.contrib import admin
-from .models import Department, Employee, Admin, Contact, Task, FinishedTask
+
 from .forms import DepartmentForm
+from .models import Admin, Contact, Department, Employee, EmployeeSignUp, FinishedTask, Task
 
 
+@admin.register(Admin)
 class AdminAdmin(admin.ModelAdmin):
     list_display = ['admin_id']
 
 
-admin.site.register(Admin)
-
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'department', 'employee_id', 'address', 'contact_number',
-                    'destination', 'date_of_birth', 'date_of_joining', 'email','newemail', 'designation', 'description')
-
-# admin.py
+                    'destination', 'date_of_birth', 'date_of_joining', 'email', 'newemail', 'designation', 'description')
 
 
 @admin.register(EmployeeSignUp)
-class EmployeeAdmin(admin.ModelAdmin):
+class EmployeeSignUpAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')
-    # Customize admin interface as needed
 
 
 @admin.register(Department)
@@ -56,4 +51,4 @@ class TaskAdmin(admin.ModelAdmin):
 @admin.register(FinishedTask)
 class FinishedTaskAdmin(admin.ModelAdmin):
     list_display = ['title', 'description', 'assigned_to',
-                    'deadline_date', 'deadline_time', 'email', 'finished']
+                    'due_date', 'deadline_time', 'email', 'finished']

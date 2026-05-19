@@ -74,7 +74,7 @@
               <span class="link-name">Task</span>
             </a>
             <li><a href="{% url "task_des" %}" >Task description </a></li>
-            <li><a href={% url "Task" %} >Assign Task</a></li>
+            <li><a href="{% url "assign_task" %}" >Assign Task</a></li>
             <li><a href={% url "assigned_tasks" %} >Assigned Task List</a></li>
             <li><a href={% url "task_end_dates" %} >Task end date</a></li>
           </ul>
@@ -93,7 +93,7 @@
             <li><a href="#" class="link-name">Management</a></li>
             <li><a href={% url "employee_list" %}>Employee Management</a></li>
             <li><a href={% url "Dlist" %}>Department Management</a></li>
-            <li><a href="#">Password Change Pending Requests</a></li>
+            <li><a href="{% url 'password_requests' %}">Password Change Pending Requests</a></li>
           </ul>
         </li>
 
@@ -110,13 +110,13 @@
         </li>
 
         <li>
-          <a href="#">
+          <a href="{% url 'admin_settings' %}">
             <i class="fas fa-gear"></i>
             <span class="link-name">Settings</span>
           </a>
 
           <ul class="sub-menu blank">
-            <li><a href="#" class="link-name">Settings</a></li>
+            <li><a href="{% url 'admin_settings' %}" class="link-name">Settings</a></li>
           </ul>
         </li>
 

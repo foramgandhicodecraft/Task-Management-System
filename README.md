@@ -136,7 +136,7 @@ Then inside the shell:
 
 ```python
 from SystemAPP.models import Admin
-Admin.objects.create(admin_id='your_admin_id', password='your_password')
+Admin.objects.create(admin_id='admin@gmail.com', password='admin123')
 exit()
 ```
 

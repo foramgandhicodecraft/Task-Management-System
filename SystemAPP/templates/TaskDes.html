@@ -134,7 +134,7 @@ hr#two {
                     <input type="hidden" name="email" value="{{ employee.email }}">
                     <p style="color:black;"><strong>Task:</strong> {{ task.title }}</p>
                     <p  style="color:black;"><strong>Description:</strong> {{ task.description }}</p>
-                    <p  style="color:black;"><strong>Deadline:</strong> {{ task.deadline_date }} {{ task.deadline_time }}</p>
+                    <p  style="color:black;"><strong>Deadline:</strong> {{ task.due_date }} {{ task.deadline_time }}</p>
                     <hr id="two" data-symbol="✈">
                 {% endfor %}
             </div>

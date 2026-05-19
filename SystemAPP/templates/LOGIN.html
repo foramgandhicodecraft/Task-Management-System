@@ -18,18 +18,7 @@
   </head>
   <body>
     <div class="container" id="container">
-      <div class="form-container sign-up-container">
-        <!-- Sign Up Form -->
-        <form  method="POST">
-        {% csrf_token %}
-          <h1>Create Account</h1>
-          <span>or use your email for registration</span>
-          <input type="text" placeholder="Name" name="Name" />
-          <input type="email" placeholder="Email" name="Email" />
-          <input type="password" placeholder="Password" name="Password" />
-          <button>Sign Up</button>
-        </form>
-      </div>
+
       <div class="form-container sign-in-container">
         <!-- Sign In Form -->
         <form  method="POST">
@@ -43,17 +32,9 @@
       </div>
       <div class="overlay-container">
         <div class="overlay">
-          <div class="overlay-panel overlay-left">
-            <h2>Welcome Back!</h2>
-            <p>
-              To keep connected with us please login with your personal info
-            </p>
-            <button class="ghost" id="signIn">Sign In</button>
-          </div>
           <div class="overlay-panel overlay-right">
-            <h2>Hello, Friend!</h2>
-            <p>Enter your personal details and start journey with us</p>
-            <button class="ghost" id="signUp">Sign Up</button>
+            <h2>Welcome to Task Manager</h2>
+            <p>Login with the credentials provided by your Administrator</p>
           </div>
         </div>
       </div>
@@ -61,17 +42,7 @@
 
 
     <script>
-      const signUpButton = document.getElementById("signUp");
-      const signInButton = document.getElementById("signIn");
-      const container = document.getElementById("container");
-
-      signUpButton.addEventListener("click", () => {
-        container.classList.add("right-panel-active");
-      });
-
-      signInButton.addEventListener("click", () => {
-        container.classList.remove("right-panel-active");
-      });
+      // The toggle logic has been removed as signup is no longer available.
     </script>
   </body>
 </html>

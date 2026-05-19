@@ -174,7 +174,7 @@ def generate_completed_tasks_over_time_plot():
     df_finished_tasks = read_frame(finished_tasks)
 
     plt.figure(figsize=(10, 6))
-    task_counts = df_finished_tasks['deadline_date'].value_counts(
+    task_counts = df_finished_tasks['due_date'].value_counts(
     ).sort_index()
     task_counts.plot(marker='o', color='skyblue')
 

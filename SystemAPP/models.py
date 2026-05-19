@@ -75,7 +75,7 @@ class Task(models.Model):
     ]
     title = models.CharField(max_length=200)
     description = models.TextField()
-    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_to = models.ForeignKey(Employee, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     due_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,7 +87,7 @@ class FinishedTask(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     assigned_to = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    deadline_date = models.DateField()
+    due_date = models.DateField()
     deadline_time = models.TimeField()
     email = models.EmailField()
     finished = models.BooleanField(default=False)
@@ -103,3 +103,17 @@ class EmployeeSignUp(models.Model):
 
     def __str__(self):
         return self.name
+
+class PasswordChangeRequest(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    requested_password = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.employee.name} - {self.status}"

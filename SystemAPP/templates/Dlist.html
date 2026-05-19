@@ -100,34 +100,12 @@
     <h1>Department List</h1>
     <div class="container">
          <div class="search-container">
-            <form method="POST" action="{% url 'search_department' %}">
-                {% csrf_token %}
+            <form method="GET" action="{% url 'Dlist' %}">
                 <input type="text" id="name" name="name" value="{{ query_name }}" placeholder="Search by Name">
                 <button type="submit">Search</button>
             </form>
         </div>
-         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#searchButton').click(function() {
-                var name = $('#name').val();
 
-                $.ajax({
-                    url: '', // Submit to the same URL
-                    method: 'POST',
-                    data: {
-                        name: name
-                    },
-                    success: function(response) {
-                        $('#departmentTableContainer').html(response); // Update department table content
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            });
-        });
-    </script>
         <div class="table-container">
             <table>
                 <thead>

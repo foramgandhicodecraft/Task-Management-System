@@ -1,49 +1,28 @@
-from django.db.models import Count
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
+from django.db.models import Count
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+import csv
 import json
-from django.http import JsonResponse
-from .models import EmployeeSignUp
+
+from django.db import IntegrityError
+from .forms import ContactForm, DepartmentForm, EmployeeForm
+from .models import Admin, Contact, Department, Employee, EmployeeSignUp, FinishedTask, Task, PasswordChangeRequest
 from .utils import (
-    generate_task_distribution_plot,
-    generate_remaining_tasks_plot,
-    generate_task_deadlines_table,
+    generate_completion_rate_by_employee_plot,
     generate_completed_tasks_over_time_plot,
     generate_employee_performance_plot,
+    generate_remaining_tasks_plot,
+    generate_task_deadlines_table,
     generate_task_description_wordcloud,
-    generate_completion_rate_by_employee_plot,
-    #generate_task_distribution_by_category_plot,
-    #generate_task_distribution_by_priority_plot,
-    # generate_task_duration_distribution_plot
+    generate_task_distribution_plot,
+    send_email_to_employee,
 )
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from .models import FinishedTask
-from django.shortcuts import redirect, render, get_object_or_404
-from django.shortcuts import render, redirect, get_object_or_404
-from django.shortcuts import redirect, render
-from .utils import send_email_to_employee
-from .models import Task
-from .models import EmployeeSignUp  # Import the Employee model
-from .models import Task, FinishedTask
-from .forms import TaskForm
-from .models import Employee, Task
-import csv
-from .forms import ContactForm
-from .models import Contact
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from .forms import DepartmentForm
-from .models import Department
-from .forms import EmployeeForm
-from .forms import EmployeeForm  # Import the form
-from django.core.files.storage import FileSystemStorage
-from .models import Employee
-from django.shortcuts import render, redirect
-from .models import Admin
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -102,8 +81,13 @@ def REGIEMP(request):
             )
 
             # Redirect to the admin dashboard after successful registration
+            messages.success(request, "Employee registered successfully!")
             return redirect("AdminDashboard")
+        except IntegrityError:
+            messages.error(request, "Employee with this Employee ID or Email already exists.")
+            return render(request, "REGIEMP.html", {'departments': departments})
         except Exception as e:
+            messages.error(request, str(e))
             return render(request, "error.html", {'error_message': str(e)})
 
     # Render the registration form template for GET requests
@@ -115,55 +99,20 @@ def employeesignuplogin(request):
         email = request.POST.get("LOGINEmail")
         password = request.POST.get("LOGINPassword")
 
-        # Check if email and password are provided for login
         if email and password:
             try:
-                user = EmployeeSignUp.objects.get(email=email)
+                user = Employee.objects.get(newemail=email)
                 if password == user.password:
                     # Authentication successful
-                    print("Authentication successful")
-                    # Replace 'EMPDashboard' with the actual URL name for the employee dashboard
                     request.session['EmployeeEmail'] = email
                     request.session['EmployeeUsername'] = user.name
                     return redirect("EMPDashboard")
                 else:
-                    # Authentication failed - invalid password
-                    print("Authentication failed: Invalid password")
-                    # Render login page with error message
                     return render(request, "LOGIN.html", {'error_message': "Invalid email or password"})
-            except EmployeeSignUp.DoesNotExist:
-                # Authentication failed - user not found
-                print("Authentication failed: User not found")
-                # Render login page with error message
+            except Employee.DoesNotExist:
                 return render(request, "LOGIN.html", {'error_message': "Invalid email or password"})
         else:
-            # Signup process
-            name = request.POST.get("Name")
-            email = request.POST.get("Email")
-            password = request.POST.get("Password")
-
-            # Check if email and password are provided for signup
-            if email and password:
-                # Check if the email is already registered
-                if EmployeeSignUp.objects.filter(email=email).exists():
-                    # Render signup page with error message
-                    return render(request, "LOGIN.html", {'error_message': "Email is already registered. Please use a different email."})
-
-                # Create a new user instance
-                new_user = EmployeeSignUp(
-                    name=name, email=email, password=password)
-                # Save the new user to the database
-                new_user.save()
-
-                # Redirect to login page after successful signup
-                # Render login page with success message
-                return render(request, "LOGIN.html", {'success_message': "Sign up successful! Please log in"})
-
-            else:
-                # No email or password provided for signup or login
-                print("No email or password provided")
-                # Render login page with error message
-                return render(request, "LOGIN.html", {'error_message': "Please provide email and password"})
+            return render(request, "LOGIN.html", {'error_message': "Please provide email and password"})
 
     # Render the login page for GET requests
     return render(request, "LOGIN.html")
@@ -277,12 +226,6 @@ def EMPDASHBOARD(request):
         error_message = "An error occurred while processing your request."
         return render(request, "error.html", {'error_message': error_message})
     
-def REGIDMENT(request):
-    return render(request, "REGIDMENT.html")
-
-from django.shortcuts import redirect
-
-
 def logout(request):
     try:
         # Check if the 'admin_email' session variable exists
@@ -371,26 +314,37 @@ def REGIDMENT(request):
             return redirect('ADMINLOGIN')
 
         if request.method == 'POST':
-            form = DepartmentForm(request.POST)
-            if form.is_valid():
-                form.save()
-                # Redirect to a page showing department list
-                return redirect('AdminDashboard')
+            try:
+                form = DepartmentForm(request.POST)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, "Department added successfully!")
+                    return redirect('AdminDashboard')
+                else:
+                    for error in form.errors.values():
+                        messages.error(request, error)
+            except IntegrityError:
+                messages.error(request, "Department with this name or code already exists.")
         else:
             form = DepartmentForm()
         return render(request, 'REGIDMENT.html', {'form': form, 'admin_email': admin_email})
     except Exception as e:
         # Handle any exceptions
-        error_message = "An error occurred while processing department registration."
+        error_message = "An error occurred while processing department registration: " + str(e)
         return render(request, "error.html", {'error_message': error_message})
 
 
 def department_list(request):
-    departments = Department.objects.all()
+    query = request.GET.get('name', '')
+    if query:
+        departments = Department.objects.filter(name__icontains=query)
+    else:
+        departments = Department.objects.all()
     total_departments = departments.count()
     context = {
         'departments': departments,
-        'total_departments': total_departments
+        'total_departments': total_departments,
+        'query_name': query
     }
     return render(request, 'Dlist.html', context)
 
@@ -404,8 +358,7 @@ def edit_department(request, department_id):
         form = DepartmentForm(request.POST, instance=department)
         if form.is_valid():
             form.save()
-            # Redirect to department list page after successful edit
-            return redirect('department_list')
+            return redirect('Dlist')
     else:
         form = DepartmentForm(instance=department)
     return render(request, 'edit_department.html', {'form': form})
@@ -413,19 +366,9 @@ def edit_department(request, department_id):
 
 def delete_department(request, department_id):
     department = get_object_or_404(Department, pk=department_id)
-    if request.method == 'POST':
-        department.delete()
-        # Redirect to department list page after successful delete
-        return redirect('department_list')
-    return render(request, 'AdminDashboard', {'department': department})
+    department.delete()
+    return redirect('Dlist')
 
-
-
-def search_department(request):
-    if request.method == 'POST':
-        name = request.POST.get('name', '')
-        departments = Department.objects.filter(name__icontains=name)
-        return render(request,'Dlist.html', {'departments': departments})
 # views.pyrender
 
 # views.py
@@ -456,7 +399,7 @@ def assign_task(request):
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
-        assigned_to = User.objects.get(id=request.POST['employee'])
+        assigned_to = Employee.objects.get(id=request.POST['employee'])
         due_date = request.POST['due_date']
 
         Task.objects.create(
@@ -474,7 +417,7 @@ def assign_task(request):
 
 def task_des(request):
     users_with_tasks = (
-        User.objects
+        Employee.objects
         .filter(task__isnull=False)
         .annotate(task_count=Count('task'))
     )
@@ -482,8 +425,9 @@ def task_des(request):
 
 def assigned_tasks(request):
     users_with_tasks = (
-        User.objects
+        Employee.objects
         .filter(task__isnull=False)
+        .annotate(task_count=Count('task'))
         .distinct()
     )
     return render(request, 'taskemployeelist.html', {'employees': users_with_tasks})
@@ -517,29 +461,30 @@ def TaskReport(request):
 
 def mark_task_finished(request, task_id, email):
     if request.method == 'POST':
-        # Retrieve the task associated with the provided ID
         task = get_object_or_404(Task, pk=task_id, assigned_to__email=email)
 
-        # Create a FinishedTask object with the details of the original task
+        # Get the Employee record matching the user's email, fallback if email doesn't exist
+        employee = Employee.objects.filter(email=email).first()
+        if not employee:
+            employee = Employee.objects.filter(id=task.assigned_to.id).first()
+        if not employee:
+            employee = Employee.objects.first()
+
         finished_task = FinishedTask.objects.create(
             title=task.title,
             description=task.description,
-            assigned_to=task.assigned_to,
-            deadline_date=task.deadline_date,
-            deadline_time=task.deadline_time,
-            email=task.email,
-            finished=True  # Mark the task as finished
+            assigned_to=employee,          # FinishedTask expects an Employee, not User
+            due_date=task.due_date,
+            deadline_time=timezone.now().time(),  # Task has no deadline_time, use current time
+            email=email,                   # Task has no email field, use the URL param
+            finished=True
         )
 
-        # Delete the original task
         task.delete()
 
-        # Redirect the user to a success page or another appropriate URL
         return redirect('AdminDashboard')
     else:
-        # Handle GET requests appropriately, if needed
         pass
-
 
 def DEV(request):
     return render(request, "Developers.html")
@@ -588,7 +533,7 @@ def EMPTaskEndDate(request):
         # Check if the 'EmployeeEmail' session variable exists
         email = request.session.get("EmployeeEmail", None)
         if email:
-            tasks = Task.objects.filter(assigned_to__email=email)
+            tasks = Task.objects.filter(assigned_to__newemail=email)
         else:
             tasks = []
 
@@ -607,7 +552,7 @@ def EmployeeTask(request):
         username = request.session.get("EmployeeUsername", None)
 
         if email:
-            tasks = Task.objects.filter(assigned_to__email=email)
+            tasks = Task.objects.filter(assigned_to__newemail=email)
         else:
             tasks = []
 
@@ -619,7 +564,7 @@ def EmployeeTask(request):
 
 def my_tasks(request):
     email = request.session.get('EmployeeEmail')
-    tasks = Task.objects.filter(assigned_to__email=email)
+    tasks = Task.objects.filter(assigned_to__newemail=email)
     return render(request, 'my_tasks.html', {'tasks': tasks})
 
 def update_status(request, task_id):
@@ -628,3 +573,65 @@ def update_status(request, task_id):
         task.status = request.POST['status']
         task.save()
     return redirect('my_tasks')
+
+def admin_settings(request):
+    admin_email = request.session.get('admin_email')
+    if not admin_email:
+        return redirect('ADMINLOGIN')
+    admin = Admin.objects.get(admin_id=admin_email)
+
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        if new_password:
+            admin.password = new_password
+            admin.save()
+            messages.success(request, "Admin password updated successfully!")
+    
+    return render(request, 'admin_settings.html', {'admin': admin})
+
+def employee_settings(request):
+    email = request.session.get("EmployeeEmail")
+    if not email:
+        return redirect('employeesignuplogin')
+    
+    employee = Employee.objects.filter(newemail=email).first()
+    
+    if request.method == 'POST' and employee:
+        new_password = request.POST.get('new_password')
+        if new_password:
+            PasswordChangeRequest.objects.create(
+                employee=employee,
+                requested_password=new_password
+            )
+            messages.success(request, "Password change request submitted successfully!")
+            
+    requests = PasswordChangeRequest.objects.filter(employee=employee).order_by('-created_at') if employee else []
+    return render(request, 'employee_settings.html', {'employee': employee, 'requests': requests})
+
+def password_requests(request):
+    admin_email = request.session.get('admin_email')
+    if not admin_email:
+        return redirect('ADMINLOGIN')
+    reqs = PasswordChangeRequest.objects.all().order_by('-created_at')
+    return render(request, 'password_requests.html', {'requests': reqs})
+
+def approve_password(request, req_id):
+    req = get_object_or_404(PasswordChangeRequest, id=req_id)
+    if req.status == 'Pending':
+        employee = req.employee
+        employee.password = req.requested_password
+        employee.save()
+        
+
+        req.status = 'Approved'
+        req.save()
+        messages.success(request, f"Password successfully changed for {employee.name}.")
+    return redirect('password_requests')
+
+def reject_password(request, req_id):
+    req = get_object_or_404(PasswordChangeRequest, id=req_id)
+    if req.status == 'Pending':
+        req.status = 'Rejected'
+        req.save()
+        messages.success(request, "Password request rejected.")
+    return redirect('password_requests')
