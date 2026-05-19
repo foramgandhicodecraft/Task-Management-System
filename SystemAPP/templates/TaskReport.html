@@ -137,8 +137,7 @@
       </div>
       
       <div class="chart-container">
-        <div class="chart-container">
-    <div class="chart" onclick="expandChart(this)">
+    <div class="chart">
         <h2>Task Deadlines</h2>
         <table>
             <thead>
@@ -148,27 +147,22 @@
                 </tr>
             </thead>
             <tbody>
+                {% for row in deadline_rows %}
                 <tr>
-                    <td>2024-06-10</td>
-                    <td>5</td>
+                    <td>{{ row.due_date }}</td>
+                    <td>{{ row.num_tasks }}</td>
                 </tr>
+                {% empty %}
                 <tr>
-                    <td>2024-06-11</td>
-                    <td>3</td>
+                    <td colspan="2">No active tasks are due next week.</td>
                 </tr>
-                <!-- Add more rows dynamically based on task deadlines -->
+                {% endfor %}
             </tbody>
         </table>
         <p>
-            This table shows the distribution of task deadlines over time.
+            This table shows active task deadlines for the coming week.
         </p>
     </div>
-    <div class="expanded-chart" onclick="closeExpandedChart(this)">
-        <span class="close-btn">&times;</span>
-        <img src="" alt="Expanded Chart" />
-    </div>
-</div>
-
       </div>
 
       <div class="chart-container">
@@ -240,14 +234,14 @@
       
       <div class="chart-container">
         <div class="chart" onclick="expandChart(this)">
-          <h2>Task Distribution by Category</h2>
+          <h2>Task Distribution by Department</h2>
           <img
             src="/static/CHARTS/task_distribution_by_category.png"
-            alt="Task Distribution by Category"
+            alt="Task Distribution by Department"
           />
           <p>
-            This chart shows the distribution of tasks across different
-            categories.
+            This chart shows the distribution of tasks across employee
+            departments.
           </p>
         </div>
         <div class="expanded-chart" onclick="closeExpandedChart(this)">
@@ -258,14 +252,13 @@
 
       <div class="chart-container">
         <div class="chart" onclick="expandChart(this)">
-          <h2>Task Distribution by Priority</h2>
+          <h2>Task Distribution by Due-Date Priority</h2>
           <img
             src="/static/CHARTS/task_distribution_by_priority.png"
-            alt="Task Distribution by Priority"
+            alt="Task Distribution by Due-Date Priority"
           />
           <p>
-            This chart displays the distribution of tasks based on priority
-            levels.
+            This chart displays active tasks grouped by due-date urgency.
           </p>
         </div>
         <div class="expanded-chart" onclick="closeExpandedChart(this)">
@@ -287,7 +280,9 @@
     </div>
     <script>
       function expandChart(chart) {
-        var chartImgSrc = chart.querySelector("img").src;
+        var chartImg = chart.querySelector("img");
+        if (!chartImg) return;
+        var chartImgSrc = chartImg.src;
         var expandedChart = document.querySelector(".expanded-chart");
         expandedChart.querySelector("img").src = chartImgSrc;
         expandedChart.style.display = "flex";

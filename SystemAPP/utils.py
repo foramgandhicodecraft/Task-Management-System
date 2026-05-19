@@ -1,4 +1,7 @@
 # utils.py
+import os
+from collections import Counter
+
 from .models import Task, FinishedTask, Employee
 import seaborn as sns
 import matplotlib.colors as mcolors
@@ -17,6 +20,23 @@ import datetime
 from django.utils import timezone
 import matplotlib
 matplotlib.use('Agg')  # Use the 'Agg' backend which is non-interactive
+
+CHART_DIR = os.path.join('SystemAPP', 'static', 'CHARTS')
+
+
+def _chart_path(filename):
+    os.makedirs(CHART_DIR, exist_ok=True)
+    return os.path.join(CHART_DIR, filename)
+
+
+def _save_empty_chart(filename, title, message='No task data available yet.'):
+    plt.figure(figsize=(10, 6))
+    plt.title(title)
+    plt.text(0.5, 0.5, message, ha='center', va='center', fontsize=14)
+    plt.axis('off')
+    plt.tight_layout()
+    plt.savefig(_chart_path(filename))
+    plt.close()
 
 
 # Import plotting functions from utils.py
@@ -59,14 +79,18 @@ def send_email_to_employee(email, new_email):
 
 
 def generate_task_distribution_plot():
-    tasks = Task.objects.all()
-    df_tasks = read_frame(tasks)
+    task_counts = Counter()
+    for row in Task.objects.values('assigned_to__name').annotate(count=Count('id')):
+        task_counts[row['assigned_to__name'] or 'Unassigned'] += row['count']
+    for row in FinishedTask.objects.filter(finished=True).values('assigned_to__name').annotate(count=Count('id')):
+        task_counts[row['assigned_to__name'] or 'Unassigned'] += row['count']
 
-    # Ensure the 'assigned_to' field is the employee's name
-    task_counts = df_tasks['assigned_to'].value_counts()
+    if not task_counts:
+        _save_empty_chart('task_distribution.png', 'Task Distribution Among Employees')
+        return
 
-    # Sort task counts in descending order
-    task_counts = task_counts.sort_values(ascending=False)
+    task_counts = pd.Series(task_counts).sort_values(ascending=False)
+
 
     plt.figure(figsize=(12, 8))
 
@@ -88,7 +112,7 @@ def generate_task_distribution_plot():
     plt.yticks(fontsize=12)
 
     # Calculate percentiles
-    percentiles = np.percentile(task_counts, [25, 50, 75])
+    percentiles = np.percentile(task_counts.values, [25, 50, 75])
 
     # Categorize tasks based on percentiles
     categories = []
@@ -110,15 +134,19 @@ def generate_task_distribution_plot():
     plt.legend(loc='upper right', fontsize=12)
 
     plt.tight_layout()
-    plt.savefig('SystemAPP/static/CHARTS/task_distribution.png')
+    plt.savefig(_chart_path('task_distribution.png'))
     plt.close()
 
 
 def generate_remaining_tasks_plot():
-    tasks = Task.objects.all()
-    total_tasks = tasks.count()
+    active_tasks = Task.objects.count()
     finished_tasks = FinishedTask.objects.filter(finished=True).count()
-    remaining_tasks = total_tasks - finished_tasks
+    total_tasks = active_tasks + finished_tasks
+    remaining_tasks = active_tasks
+
+    if total_tasks == 0:
+        _save_empty_chart('remaining_tasks.png', 'Remaining Tasks')
+        return
 
     # Calculate percentages
     finished_percentage = (finished_tasks / total_tasks) * 100
@@ -146,7 +174,7 @@ def generate_remaining_tasks_plot():
     plt.title('Remaining Tasks', fontsize=16)
 
     # Save the plot
-    plt.savefig('SystemAPP/static/CHARTS/remaining_tasks.png')
+    plt.savefig(_chart_path('remaining_tasks.png'))
     plt.close()
 
 
@@ -160,23 +188,34 @@ def generate_task_deadlines_table():
     # Calculate the date for the following Monday
     following_monday = next_monday + datetime.timedelta(weeks=1)
 
-    # Filter tasks whose deadline is within the coming next week starting from Monday
-    tasks = Task.objects.filter(due_date__gte=next_monday, due_date__lt=following_monday)
-    
-    # Prepare data for the table
-    deadlines_data = [{'due_date': task.due_date, 'num_tasks': Task.objects.filter(due_date=task.due_date).count()} for task in tasks]
+    deadlines_data = (
+        Task.objects
+        .filter(due_date__gte=next_monday, due_date__lt=following_monday)
+        .values('due_date')
+        .annotate(num_tasks=Count('id'))
+        .order_by('due_date')
+    )
 
-    return deadlines_data
+    return list(deadlines_data)
 
 
 def generate_completed_tasks_over_time_plot():
-    finished_tasks = FinishedTask.objects.filter(finished=True)
-    df_finished_tasks = read_frame(finished_tasks)
+    finished_tasks = (
+        FinishedTask.objects
+        .filter(finished=True)
+        .values('due_date')
+        .annotate(count=Count('id'))
+        .order_by('due_date')
+    )
+
+    if not finished_tasks:
+        _save_empty_chart('completed_tasks_over_time.png', 'Completed Tasks Over Time')
+        return
 
     plt.figure(figsize=(10, 6))
-    task_counts = df_finished_tasks['due_date'].value_counts(
-    ).sort_index()
-    task_counts.plot(marker='o', color='skyblue')
+    dates = [row['due_date'] for row in finished_tasks]
+    counts = [row['count'] for row in finished_tasks]
+    plt.plot(dates, counts, marker='o', color='skyblue')
 
     plt.title('Completed Tasks Over Time')
     plt.xlabel('Deadline Date')
@@ -187,60 +226,57 @@ def generate_completed_tasks_over_time_plot():
     # Add legend
     plt.legend(['Completed Tasks'], loc='upper right', facecolor='lightgrey')
 
-    plt.savefig('SystemAPP/static/CHARTS/completed_tasks_over_time.png')
+    plt.savefig(_chart_path('completed_tasks_over_time.png'))
     plt.close()
 
 
 def generate_employee_performance_plot():
-    # Query all tasks
-    tasks = Task.objects.all()
-    finished_tasks = FinishedTask.objects.filter(finished=True)
+    total_counts = Counter()
+    completed_counts = Counter()
 
-    # Convert queryset to DataFrame
-    df_tasks = read_frame(tasks)
-    df_finished_tasks = read_frame(finished_tasks)
+    for row in Task.objects.values('assigned_to__name').annotate(count=Count('id')):
+        total_counts[row['assigned_to__name'] or 'Unassigned'] += row['count']
+    for row in FinishedTask.objects.filter(finished=True).values('assigned_to__name').annotate(count=Count('id')):
+        name = row['assigned_to__name'] or 'Unassigned'
+        total_counts[name] += row['count']
+        completed_counts[name] += row['count']
 
-    # Group tasks by assigned employee and count the number of tasks for each employee
-    employee_task_counts = df_tasks['assigned_to'].value_counts()
+    if not total_counts:
+        _save_empty_chart('employee_performance.png', 'Employee Performance')
+        return
 
-    # Group finished tasks by assigned employee and count the number of completed tasks for each employee
-    employee_finished_task_counts = df_finished_tasks['assigned_to'].value_counts(
-    )
-
-    # Merge the two DataFrames on employee name and fill missing values with 0
-    df_employee_performance = pd.merge(
-        employee_task_counts, employee_finished_task_counts, left_index=True, right_index=True, how='outer').fillna(0)
-
-    # Rename columns for clarity
-    df_employee_performance.columns = ['total_tasks', 'completed_tasks']
-
-    # Calculate completion percentage for each employee
-    df_employee_performance['completion_percentage'] = (
-        df_employee_performance['completed_tasks'] / df_employee_performance['total_tasks']) * 100
-
-    # Sort employees by completion percentage
-    df_employee_performance.sort_values(
-        by='completion_percentage', ascending=False, inplace=True)
+    performance = pd.DataFrame({
+        'employee': list(total_counts.keys()),
+        'completion_percentage': [
+            (completed_counts[name] / total_counts[name]) * 100 if total_counts[name] else 0
+            for name in total_counts.keys()
+        ],
+    }).sort_values(by='completion_percentage', ascending=False)
 
     # Plotting
     plt.figure(figsize=(10, 6))
-    sns.barplot(x='completion_percentage', y=df_employee_performance.index,
-                data=df_employee_performance, palette='coolwarm')
+    sns.barplot(x='completion_percentage', y='employee', hue='employee',
+                data=performance, palette='coolwarm', legend=False)
     plt.title('Employee Performance')
     plt.xlabel('Completion Percentage')
     plt.ylabel('Employee')
     plt.tight_layout()
 
     # Save the plot
-    plt.savefig('SystemAPP/static/CHARTS/employee_performance.png')
+    plt.savefig(_chart_path('employee_performance.png'))
     plt.close()
 
 
 
 def generate_task_description_wordcloud():
-    tasks = Task.objects.all()
-    df_tasks = read_frame(tasks)
-    descriptions = ' '.join(df_tasks['description'])
+    descriptions = ' '.join(
+        list(Task.objects.values_list('description', flat=True)) +
+        list(FinishedTask.objects.filter(finished=True).values_list('description', flat=True))
+    ).strip()
+
+    if not descriptions:
+        _save_empty_chart('task_description_wordcloud.png', 'Task Description Word Cloud')
+        return
 
     wordcloud = WordCloud(width=800, height=400,
                           background_color='white').generate(descriptions)
@@ -250,27 +286,30 @@ def generate_task_description_wordcloud():
     plt.axis('off')
     plt.title('Task Description Word Cloud')
     plt.tight_layout()
-    plt.savefig('SystemAPP/static/CHARTS/task_description_wordcloud.png')
+    plt.savefig(_chart_path('task_description_wordcloud.png'))
     plt.close()
 
 
 def generate_completion_rate_by_employee_plot():
-    tasks = Task.objects.all()
-    df_tasks = read_frame(tasks)
-    total_tasks_by_employee = df_tasks.groupby('assigned_to').size()
-    finished_tasks_by_employee = FinishedTask.objects.filter(
-        finished=True).values('assigned_to').annotate(count=Count('assigned_to'))
+    total_counts = Counter()
+    completed_counts = Counter()
 
-    employee_names = total_tasks_by_employee.index
-    completion_rates = []
+    for row in Task.objects.values('assigned_to__name').annotate(count=Count('id')):
+        total_counts[row['assigned_to__name'] or 'Unassigned'] += row['count']
+    for row in FinishedTask.objects.filter(finished=True).values('assigned_to__name').annotate(count=Count('id')):
+        name = row['assigned_to__name'] or 'Unassigned'
+        total_counts[name] += row['count']
+        completed_counts[name] += row['count']
 
-    for emp in employee_names:
-        total_tasks = total_tasks_by_employee.get(emp, 0)
-        finished_tasks = next(
-            (item['count'] for item in finished_tasks_by_employee if item['assigned_to'] == emp), 0)
-        completion_rate = (finished_tasks / total_tasks) * \
-            100 if total_tasks > 0 else 0
-        completion_rates.append(completion_rate)
+    if not total_counts:
+        _save_empty_chart('completion_rate_by_employee.png', 'Task Completion Rate by Employee')
+        return
+
+    employee_names = list(total_counts.keys())
+    completion_rates = [
+        (completed_counts[name] / total_counts[name]) * 100 if total_counts[name] else 0
+        for name in employee_names
+    ]
 
     plt.figure(figsize=(8, 8))
     plt.bar(employee_names, completion_rates, color='green')
@@ -279,7 +318,66 @@ def generate_completion_rate_by_employee_plot():
     plt.ylabel('Completion Rate (%)')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig('SystemAPP/static/CHARTS/completion_rate_by_employee.png')
+    plt.savefig(_chart_path('completion_rate_by_employee.png'))
+    plt.close()
+
+
+def generate_task_distribution_by_category_plot():
+    category_counts = Counter()
+    for row in Task.objects.values('assigned_to__department').annotate(count=Count('id')):
+        category_counts[row['assigned_to__department'] or 'Uncategorized'] += row['count']
+    for row in FinishedTask.objects.filter(finished=True).values('assigned_to__department').annotate(count=Count('id')):
+        category_counts[row['assigned_to__department'] or 'Uncategorized'] += row['count']
+
+    if not category_counts:
+        _save_empty_chart('task_distribution_by_category.png', 'Task Distribution by Department')
+        return
+
+    labels = list(category_counts.keys())
+    counts = list(category_counts.values())
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(labels, counts, color=['skyblue', 'lightgreen', 'lightcoral', 'orange', 'plum'])
+    plt.title('Task Distribution by Department')
+    plt.xlabel('Department')
+    plt.ylabel('Number of Tasks')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.savefig(_chart_path('task_distribution_by_category.png'))
+    plt.close()
+
+
+def generate_task_distribution_by_priority_plot():
+    today = timezone.now().date()
+    priority_counts = Counter({'Overdue': 0, 'High': 0, 'Medium': 0, 'Low': 0})
+
+    for due_date in Task.objects.values_list('due_date', flat=True):
+        days_left = (due_date - today).days
+        if days_left < 0:
+            priority_counts['Overdue'] += 1
+        elif days_left <= 2:
+            priority_counts['High'] += 1
+        elif days_left <= 7:
+            priority_counts['Medium'] += 1
+        else:
+            priority_counts['Low'] += 1
+
+    if sum(priority_counts.values()) == 0:
+        _save_empty_chart('task_distribution_by_priority.png', 'Task Distribution by Due-Date Priority')
+        return
+
+    labels = [label for label, count in priority_counts.items() if count > 0]
+    counts = [priority_counts[label] for label in labels]
+    colors = {'Overdue': '#ef4444', 'High': '#f97316', 'Medium': '#facc15', 'Low': '#22c55e'}
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(labels, counts, color=[colors[label] for label in labels])
+    plt.title('Task Distribution by Due-Date Priority')
+    plt.xlabel('Priority')
+    plt.ylabel('Number of Active Tasks')
+    plt.gca().yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    plt.tight_layout()
+    plt.savefig(_chart_path('task_distribution_by_priority.png'))
     plt.close()
 
 

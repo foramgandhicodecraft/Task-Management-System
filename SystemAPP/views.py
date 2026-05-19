@@ -21,6 +21,8 @@ from .utils import (
     generate_remaining_tasks_plot,
     generate_task_deadlines_table,
     generate_task_description_wordcloud,
+    generate_task_distribution_by_category_plot,
+    generate_task_distribution_by_priority_plot,
     generate_task_distribution_plot,
     send_email_to_employee,
 )
@@ -446,17 +448,19 @@ def TaskReport(request):
     # Generate plots
     generate_task_distribution_plot()
     generate_remaining_tasks_plot()
-    generate_task_deadlines_table()
+    deadline_rows = generate_task_deadlines_table()
     generate_completed_tasks_over_time_plot()
     generate_employee_performance_plot()
     generate_task_description_wordcloud()
     generate_completion_rate_by_employee_plot()
-    #generate_task_distribution_by_category_plot()
-    #generate_task_distribution_by_priority_plot()
+    generate_task_distribution_by_category_plot()
+    generate_task_distribution_by_priority_plot()
     # generate_task_duration_distribution_plot()    
 
     # Add any additional context data you want to pass to the template
-    context = {}
+    context = {
+        'deadline_rows': deadline_rows,
+    }
 
     # Render the template
     return render(request, 'TaskReport.html', context)
