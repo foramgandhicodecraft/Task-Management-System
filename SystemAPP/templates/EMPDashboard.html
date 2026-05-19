@@ -22,16 +22,7 @@
     </div>
 
     <ul class="nav-list">
-        <li>
-        <a href="{% url 'TaskDashboard' %}">
-            <i class="fab fa-microsoft"></i>
-            <span class="link-name">Dashboard</span>
-        </a>
 
-        <ul class="sub-menu blank">
-            <li><a href="{% url 'EMPDashboard' %}" class="link-name">Dashboard</a></li>
-        </ul>
-        </li>
         <li>
         <div class="icon-link" >
         <a href="#">
@@ -41,7 +32,7 @@
         <i class="fas fa-caret-down arrow"></i>
         </div>
         <ul class="sub-menu">
-            <li><a href="#" class="link-name">Dept name</a></li>
+            <li><a href="#" class="link-name">{{ employee.department.name }}</a></li>
             <li><a href="{% url 'EmployeeTask' %}" >Task description</a></li>
             <li><a href="{% url 'EMPTaskEndDate' %}" >Task end date</a></li>
             <li><a href="{% url 'my_tasks' %}">My Tasks</a></li>

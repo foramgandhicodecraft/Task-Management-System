@@ -203,7 +203,8 @@ def EMPDASHBOARD(request):
             tasks = Task.objects.filter(assigned_to__newemail=email)
 
             # Get total number of tasks
-            total_tasks = tasks.count()
+            finished_tasks_count = FinishedTask.objects.filter(assigned_to=employee).count()
+            total_tasks = tasks.count() + finished_tasks_count
 
             # Get number of in-progress tasks with high priority
             in_progress_tasks = tasks.filter(
@@ -211,9 +212,7 @@ def EMPDASHBOARD(request):
             ).count()
 
             # Get number of completed tasks
-            completed_tasks = FinishedTask.objects.filter(
-                email=email, finished=True
-            ).count()
+            completed_tasks = tasks.filter(status='Completed').count() + finished_tasks_count
 
             # Render the template with counts
             return render(request, "EMPDashboard.html", {
@@ -505,28 +504,30 @@ def EMPAccount(request):
 def TaskDashboard(request):
     # Assuming you get email from session
     email = request.session.get("EmployeeEmail")
+    employee = Employee.objects.filter(newemail=email).first()
 
     # Filter tasks assigned to the employee (using assigned_to relationship)
-    assigned_tasks = Task.objects.filter(assigned_to__email=email)
+    assigned_tasks = Task.objects.filter(assigned_to__newemail=email)
 
-    total_tasks = assigned_tasks.count()
-    completed_tasks = FinishedTask.objects.filter(
-        email=email, finished=True).count()
+    finished_tasks_count = FinishedTask.objects.filter(assigned_to=employee).count()
+    total_tasks = assigned_tasks.count() + finished_tasks_count
+    completed_tasks = assigned_tasks.filter(status='Completed').count() + finished_tasks_count
 
-    # Calculate completion rate with potential zero division handling and 50% for equal values
+    # Calculate completion rate with potential zero division handling
     completion_rate = 0
     if total_tasks > 0:
         if total_tasks == completed_tasks:
-            completion_rate = 50  # Set 50% for equal completed and total tasks
+            completion_rate = 100  # Set 100% for equal completed and total tasks
         else:
-            completion_rate = round((completed_tasks / total_tasks) * 100,2)
+            completion_rate = round((completed_tasks / total_tasks) * 100, 2)
     performance_rate = completion_rate
-    NoOfTasks=total_tasks + completed_tasks
+    NoOfTasks = total_tasks
 
     context = {
         'completion_rate': completion_rate,
         'total_tasks': NoOfTasks,
         'performance_rate': performance_rate,
+        'employee': employee,
     }
 
     return render(request, "EMPTaskDashboard.html", context)
