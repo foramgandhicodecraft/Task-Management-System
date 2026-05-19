@@ -354,6 +354,9 @@ hr {
 }
 
 .main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 80px;
     width: 100%;
 }
@@ -399,13 +402,10 @@ hr {
 
 /* ======== Styling Dashboard ======== */
 .dashboard {
-    width: 60%;
+    width: 100%;
+    max-width: 980px;
     padding: 40px;
-    display: block;
-    position: absolute;
-    left: 55%;
-    top: 40%;
-    transform: translate(-60%, -70%);
+    margin: 0 auto;
 }
 
 .heading {
@@ -421,20 +421,20 @@ hr {
 
 .color-box {
     width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+    justify-content: center;
 }
 
 .box {
     display: flex;
     height: 120px;
     flex-direction: column;
-    width: 180px;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    margin: 10px 5px;
+    margin: 10px 0;
 }
 
 .box i {
