@@ -216,12 +216,18 @@ def EMPDASHBOARD(request):
 
             # Get number of completed tasks
             completed_tasks = tasks.filter(status='Completed').count() + finished_tasks_count
+            total_progress_percent = 100 if total_tasks else 0
+            in_progress_percent = round((in_progress_tasks / total_tasks) * 100, 2) if total_tasks else 0
+            completed_percent = round((completed_tasks / total_tasks) * 100, 2) if total_tasks else 0
 
             # Render the template with counts
             return render(request, "EMPDashboard.html", {
                 'total_tasks': total_tasks,
                 'in_progress_tasks': in_progress_tasks,
                 'completed_tasks': completed_tasks,
+                'total_progress_percent': total_progress_percent,
+                'in_progress_percent': in_progress_percent,
+                'completed_percent': completed_percent,
                 'employee': employee,
             })
         else:
@@ -298,12 +304,19 @@ def AdminDashboard(request):
 
         # Count of assigned tasks (assuming each employee can have multiple tasks)
         assigned_tasks_count = Task.objects.count()
+        dashboard_bar_max = max(assigned_tasks_count, finished_tasks_count, total_departments, 1)
+        assigned_tasks_percent = round((assigned_tasks_count / dashboard_bar_max) * 100, 2)
+        finished_tasks_percent = round((finished_tasks_count / dashboard_bar_max) * 100, 2)
+        departments_percent = round((total_departments / dashboard_bar_max) * 100, 2)
 
         return render(request, "AdminDashboard.html", {
             'total_employees': total_employees,
             'total_departments': total_departments,
             'finished_tasks_count': finished_tasks_count,
             'assigned_tasks_count': assigned_tasks_count,
+            'assigned_tasks_percent': assigned_tasks_percent,
+            'finished_tasks_percent': finished_tasks_percent,
+            'departments_percent': departments_percent,
             'admin_email': admin_email,
         })
     except Exception as e:

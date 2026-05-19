@@ -164,21 +164,21 @@
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#8b5cf6;display:inline-block;"></span>In Progress</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ assigned_tasks_count }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:60%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ assigned_tasks_percent }}%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;"></span>Completed</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ finished_tasks_count }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:40%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ finished_tasks_percent }}%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#06b6d4;display:inline-block;"></span>Departments</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ total_departments }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:70%;background:linear-gradient(90deg,#06b6d4,#0891b2);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ departments_percent }}%;background:linear-gradient(90deg,#06b6d4,#0891b2);border-radius:99px;"></div></div>
             </div>
           </div>
         </div>

@@ -124,21 +124,21 @@
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>Total Assigned</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ total_tasks }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:100%;background:linear-gradient(90deg,#f59e0b,#d97706);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ total_progress_percent }}%;background:linear-gradient(90deg,#f59e0b,#d97706);border-radius:99px;"></div></div>
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#8b5cf6;display:inline-block;"></span>In Progress</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ in_progress_tasks }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:55%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ in_progress_percent }}%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
             </div>
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
                 <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;"></span>Completed</span>
                 <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ completed_tasks }}</span>
               </div>
-              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:40%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:{{ completed_percent }}%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
             </div>
           </div>
         </div>
