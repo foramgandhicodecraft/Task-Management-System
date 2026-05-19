@@ -1,141 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Employee</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-    <style>
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f8f8;
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-image: url('https://source.unsplash.com/1600x900/?employee');
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.box {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
-    animation: fadeIn 0.8s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.box h1 {
-    color: #333;
-    margin-bottom: 20px;
-}
-
-form {
-    width: 100%;
-}
-
-form label {
-    color: #555;
-    font-size: 16px;
-    text-align: left;
-    display: block;
-    margin-bottom: 5px;
-}
-
-form input[type="text"],
-form input[type="email"],
-form input[type="date"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-    margin-bottom: 10px;
-    background-color: #f2f2f2; /* Light gray background color */
-}
-
-form input[type="text"]:focus,
-form input[type="email"]:focus,
-form input[type="date"]:focus {
-    outline: none;
-    border-color: #007bff;
-}
-
-.button-wrapper {
-    width: 100%;
-    text-align: center;
-}
-
-.button-wrapper button {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    margin: 0 5px;
-}
-
-.button-wrapper button[type="reset"] {
-    background-color: #ccc;
-    color: #333;
-}
-
-.button-wrapper button[type="reset"]:hover {
-    background-color: #999;
-}
-
-.button-wrapper button[type="submit"] {
-    background-color: #007bff;
-    color: #fff;
-}
-
-.button-wrapper button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-@media screen and (max-width: 768px) {
-    .box {
-        padding: 20px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Employee</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#f1f5f9; color:#0f172a; min-height:100vh; padding:36px 20px; }
+    .page-wrap { max-width:700px; margin:0 auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header h1 { font-size:22px; font-weight:700; }
+    .back-link { color:#64748b; text-decoration:none; font-size:13.5px; font-weight:500; display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; transition:background .15s; }
+    .back-link:hover { background:#f8fafc; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06); border:1px solid #e2e8f0; padding:32px 36px; }
+    /* Django form.as_p */
+    p { margin-bottom:18px; }
+    p label { display:block; font-size:13px; font-weight:600; color:#475569; margin-bottom:7px; }
+    p input[type="text"],p input[type="email"],p input[type="date"],p input[type="password"],
+    p select,p textarea,
+    input[type="text"],input[type="email"],input[type="date"],input[type="password"],input[type="number"],
+    select,textarea {
+      width:100%; padding:10px 13px; border:1px solid #e2e8f0; border-radius:7px;
+      font-size:14px; color:#0f172a; background:#fff; font-family:'Inter',sans-serif;
+      transition:border-color .15s,box-shadow .15s; outline:none;
     }
-}
-
-    </style>
+    input:focus,select:focus,textarea:focus {
+      border-color:#4f46e5; box-shadow:0 0 0 3px rgba(79,70,229,.1);
+    }
+    input[type="file"] { background:#f8fafc; padding:8px 13px; cursor:pointer; }
+    textarea { resize:vertical; min-height:90px; }
+    ul.errorlist { color:#ef4444; font-size:12px; margin:4px 0 0; padding:0; list-style:none; }
+    .form-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:28px; padding-top:22px; border-top:1px solid #f1f5f9; }
+    .btn-primary { padding:10px 24px; background:#4f46e5; color:#fff; border:none; border-radius:7px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s,transform .1s; display:inline-flex; align-items:center; gap:6px; }
+    .btn-primary:hover { background:#3730a3; }
+    .btn-secondary { padding:10px 20px; background:transparent; color:#64748b; border:1px solid #e2e8f0; border-radius:7px; font-size:14px; font-weight:500; cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s; }
+    .btn-secondary:hover { background:#f8fafc; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="box">
-            <h1>Edit Employee</h1>
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="button-wrapper">
-                    <button type="reset"><i class="fas fa-undo"></i> Reset</button>
-                    <button type="submit"><i class="fas fa-save"></i> Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><i class="fas fa-user-pen" style="color:#4f46e5;margin-right:10px;"></i>Edit Employee</h1>
+    <a href="{% url 'employee_list' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+  <div class="card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="form-actions">
+        <button type="reset" class="btn-secondary"><i class="fas fa-undo"></i> Reset</button>
+        <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>

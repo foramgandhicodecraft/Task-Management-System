@@ -12,7 +12,8 @@ import json
 
 from django.db import IntegrityError
 from .forms import ContactForm, DepartmentForm, EmployeeForm
-from .models import Admin, Contact, Department, Employee, EmployeeSignUp, FinishedTask, Task, PasswordChangeRequest
+from textblob import TextBlob
+from .models import Admin, Contact, Department, Employee, EmployeeSignUp, EmployeeFeedback, FinishedTask, Task, PasswordChangeRequest
 from .utils import (
     generate_completion_rate_by_employee_plot,
     generate_completed_tasks_over_time_plot,
@@ -498,7 +499,32 @@ def task_end_dates(request):
     return render(request, 'taskenddate.html', {'tasks': tasks})
 
 def EMPAccount(request):
-    return render(request,"EMPAccount.html")
+    email = request.session.get("EmployeeEmail")
+    if not email:
+        return redirect("employeesignuplogin")
+
+    employee = Employee.objects.filter(newemail=email).first()
+
+    if request.method == "POST":
+        message = request.POST.get("message", "").strip()
+        if message and employee:
+            polarity = TextBlob(message).sentiment.polarity
+            if polarity > 0:
+                label = "Positive"
+            elif polarity < 0:
+                label = "Negative"
+            else:
+                label = "Neutral"
+            EmployeeFeedback.objects.create(
+                employee=employee,
+                message=message,
+                sentiment_score=polarity,
+                sentiment_label=label,
+            )
+            messages.success(request, "Your query has been submitted successfully!")
+            return redirect("EMPAccount")
+
+    return render(request, "EMPAccount.html", {"employee": employee})
 
 
 def TaskDashboard(request):
@@ -640,3 +666,17 @@ def reject_password(request, req_id):
         req.save()
         messages.success(request, "Password request rejected.")
     return redirect('password_requests')
+
+
+def admin_feedback(request):
+    admin_email = request.session.get('admin_email')
+    if not admin_email:
+        return redirect('ADMINLOGIN')
+    feedbacks = EmployeeFeedback.objects.select_related('employee').order_by('sentiment_score')
+    counts = {
+        'total': feedbacks.count(),
+        'positive': feedbacks.filter(sentiment_label='Positive').count(),
+        'neutral': feedbacks.filter(sentiment_label='Neutral').count(),
+        'negative': feedbacks.filter(sentiment_label='Negative').count(),
+    }
+    return render(request, 'AdminFeedback.html', {'feedbacks': feedbacks, 'counts': counts})

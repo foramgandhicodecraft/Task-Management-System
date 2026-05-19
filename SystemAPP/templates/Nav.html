@@ -1,14 +1,13 @@
         <div class="navbar">
-            <a href="http://127.0.0.1:8000/"><img src="/static/IMAGES/logo.png" class="logo" alt="Logo"></a>
+            <a href="{% url 'HOME' %}"><img src="/static/IMAGES/logo.png" class="logo" alt="TMS Logo"></a>
             <div class="brand">
-                <h1>Task</h1>
-                <h3>Management System</h3>
+                <h1>Task Management</h1>
+                <h4>System</h4>
             </div>
             <ul class="nav">
-                <li><a href={% url "ADMINLOGIN" %}>ADMIN</a></li>
-                <li><a href={% url "ABOUT" %}>AboutUs</a></li>
-                <li><a href={% url "employeesignuplogin" %}>LOGIN</a></li>
-                <li><a href={% url "CONTACT" %}>ContactUs</a></li>
-                {% comment %} <li><a href={% url "CONTACT" %}>Documents</a></li> {% endcomment %}
+                <li><a href="{% url 'ADMINLOGIN' %}">Admin</a></li>
+                <li><a href="{% url 'ABOUT' %}">About</a></li>
+                <li><a href="{% url 'employeesignuplogin' %}">Login</a></li>
+                <li><a href="{% url 'CONTACT' %}">Contact</a></li>
             </ul>
         </div>

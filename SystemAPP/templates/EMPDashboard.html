@@ -1,130 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee task Management Dashboard </title>
-    <link rel="stylesheet" href="/static/css/EMPDashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="/static/css/EMPDashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 </head>
-<style>
-
-</style>
 <body>
 
-    <section>
-    <div class="sidebar close">
+<div class="warning">
+  <p>Please use a larger screen to access the employee dashboard.</p>
+</div>
+
+<section>
+  <div class="sidebar close">
     <div class="logo">
-        <img class="logo-name" src="/static/IMAGES/mono.jpg" style="margin:20px;height:40px;border-radius:20px;">
+      <img class="logo-name" src="/static/IMAGES/mono.jpg" alt="logo">
     </div>
 
     <ul class="nav-list">
 
-        <li>
-        <div class="icon-link" >
-        <a href="#">
-            <i class="fa-solid fa-list-check"></i>
-            <span class="link-name">Task</span>
-        </a>
-        <i class="fas fa-caret-down arrow"></i>
+      <li>
+        <div class="icon-link">
+          <a href="{% url 'EMPDashboard' %}"><i class="fa-solid fa-house"></i><span class="link-name">Dashboard</span></a>
+        </div>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'EMPDashboard' %}" class="link-name">Dashboard</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fa-solid fa-list-check"></i><span class="link-name">Tasks</span></a>
+          <i class="fas fa-caret-down arrow"></i>
         </div>
         <ul class="sub-menu">
-            <li><a href="#" class="link-name">{{ employee.department.name }}</a></li>
-            <li><a href="{% url 'EmployeeTask' %}" >Task description</a></li>
-            <li><a href="{% url 'EMPTaskEndDate' %}" >Task end date</a></li>
-            <li><a href="{% url 'my_tasks' %}">My Tasks</a></li>
+          <li><a href="#" class="link-name">Tasks</a></li>
+          <li><a href="{% url 'EmployeeTask' %}">Task Description</a></li>
+          <li><a href="{% url 'EMPTaskEndDate' %}">Task End Dates</a></li>
+          <li><a href="{% url 'my_tasks' %}">My Tasks</a></li>
+          <li><a href="{% url 'TaskDashboard' %}">Task Stats</a></li>
         </ul>
-        </li>
-         <li>
+      </li>
+
+      <li>
         <a href="{% url 'EMPAccount' %}">
-            <i class="fa fa-question-circle"></i>
-            <span class="link-name">Raise Query</span>
+          <i class="fa fa-question-circle"></i>
+          <span class="link-name">Raise Query</span>
         </a>
-        </li>
-        <li>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'EMPAccount' %}" class="link-name">Raise Query</a></li>
+        </ul>
+      </li>
+
+      <li>
         <a href="{% url 'employee_settings' %}">
-            <i class="fa fa-gear"></i>
-            <span class="link-name">Settings</span>
+          <i class="fa fa-gear"></i>
+          <span class="link-name">Settings</span>
         </a>
-        </li>
-        <li>
-            <div class="profile-details">
-            <div class="profile-content">
-            </div>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'employee_settings' %}" class="link-name">Settings</a></li>
+        </ul>
+      </li>
 
-            <div class="name-job">
-            <div class="name">{{ employee.name }}</div>
-            <div class="job">{{ employee.designation }} | {{ employee.department }}</div>
-            </div>
-            <a href="{% url 'logout' %}"><i class="fas fa-right-to-bracket" ></i></a>
-            </div>
-        </li>
     </ul>
-    </div>
 
-    <div class="home-section">
+    <div class="profile-details">
+      <div class="profile-content">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-user" style="font-size:15px;color:#c4b5fd;"></i>
+        </div>
+        <div class="name-job" style="margin-left:10px;">
+          <div class="name">{{ employee.name }}</div>
+          <div class="job">{{ employee.designation }}</div>
+        </div>
+      </div>
+      <a href="{% url 'logout' %}"><i class="fas fa-right-from-bracket"></i></a>
+    </div>
+  </div>
+
+  <div class="home-section">
     <div class="home-content">
-        <i class="fas fa-bars"></i>
-        <span class="text">Employee Dashboard</span>
+      <i class="fas fa-bars"></i>
+      <span class="text">Employee Dashboard</span>
     </div>
-    </div>
 
+    <div class="dashboard">
+      <div class="dash-welcome">
+        <div class="dash-welcome-left">
+          <div class="welcome-label">Welcome back</div>
+          <div class="welcome-title">{{ employee.name }}</div>
+          <div class="welcome-sub">{{ employee.designation }} — {{ employee.department }}</div>
+        </div>
+        <div class="dash-welcome-icon"><i class="fas fa-user-circle"></i></div>
+      </div>
+      <h2 class="heading">My Overview</h2>
+      <div class="color-box">
+        <div class="box pink">
+          <i class="fa fa-briefcase"></i>
+          <p>Total Tasks</p>
+          <h3>{{ total_tasks }}</h3>
+        </div>
+        <div class="box orange">
+          <i class="fa fa-hourglass-half"></i>
+          <p>In Progress</p>
+          <h3>{{ in_progress_tasks }}</h3>
+        </div>
+        <div class="box green">
+          <i class="fa fa-check-circle"></i>
+          <p>Completed</p>
+          <h3>{{ completed_tasks }}</h3>
+        </div>
+      </div>
 
-        <!-- User Top Naviagation Starts from Here -->
-        
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px;">
 
-            <!-- User Dashboard Starts from Here -->
-            <div class="dashboard">
-            <h2 class="heading">Dashboard </h2>
-            <div class="color-box">
-                <div class="box pink">
-                    <p> <i class="fa fa-building-o" aria-hidden="true"></i> </p>
-                    <p>Tasks</p>
-                    <h3>{{ total_tasks }}</h3> <!-- Insert total_tasks count here -->
-                </div>
-                <div class="box green">
-                    <p> <i class="fa fa-area-chart" aria-hidden="true"></i> </p>
-                    <p>In progress Task</p>
-                    <h3>{{ in_progress_tasks }}</h3> <!-- Insert in_progress_tasks count here -->
-                </div>
-                <div class="box blue">
-                    <p> <i class="fa fa-tasks" aria-hidden="true"></i> </p>
-                    <p>Completed Task</p>
-                    <h3>{{ completed_tasks }}</h3> <!-- Insert completed_tasks count here -->
-                </div>
+        <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.07);">
+          <p style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px;">Task Breakdown</p>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>Total Assigned</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ total_tasks }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:100%;background:linear-gradient(90deg,#f59e0b,#d97706);border-radius:99px;"></div></div>
             </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#8b5cf6;display:inline-block;"></span>In Progress</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ in_progress_tasks }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:55%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;"></span>Completed</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ completed_tasks }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:40%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
+            </div>
+          </div>
         </div>
-        </div>
-    </section>
 
-</body>
+        <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.07);">
+          <p style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;">Quick Access</p>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <a href="{% url 'my_tasks' %}" style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:13px;font-weight:600;transition:background .15s;"><i class="fas fa-clipboard-list" style="color:#7c3aed;width:16px;"></i>My Tasks</a>
+            <a href="{% url 'EmployeeTask' %}" style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:13px;font-weight:600;"><i class="fas fa-file-alt" style="color:#7c3aed;width:16px;"></i>Task Descriptions</a>
+            <a href="{% url 'EMPTaskEndDate' %}" style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:13px;font-weight:600;"><i class="fas fa-calendar-alt" style="color:#7c3aed;width:16px;"></i>Task Deadlines</a>
+            <a href="{% url 'EMPAccount' %}" style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:13px;font-weight:600;"><i class="fas fa-comment-dots" style="color:#7c3aed;width:16px;"></i>Raise a Query</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
 <script>
-    /* Created by Tivotal */
+const btn = document.querySelector(".fa-bars");
+const sidebar = document.querySelector(".sidebar");
+btn.addEventListener("click", () => sidebar.classList.toggle("close"));
 
-let btn = document.querySelector(".fa-bars");
-let sidebar = document.querySelector(".sidebar");
-
-btn.addEventListener("click", () => {
-  sidebar.classList.toggle("close");
-});
-
-let arrows = document.querySelectorAll(".arrow");
-for (var i = 0; i < arrows.length; i++) {
-  arrows[i].addEventListener("click", (e) => {
-    let arrowParent = e.target.parentElement.parentElement;
-
-    arrowParent.classList.toggle("show");
+document.querySelectorAll(".arrow").forEach(arrow => {
+  arrow.addEventListener("click", e => {
+    e.target.closest("li").classList.toggle("show");
   });
-}
-    const hamburger = document.getElementById('menu');
-    const navigation = document.getElementById('navigation');
-    hamburger.addEventListener('click', function () {
-        navigation.classList.toggle('active')
-        console.log('clicked');
-    })
+});
 </script>
-
+</body>
 </html>

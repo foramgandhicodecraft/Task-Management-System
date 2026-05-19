@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raise Query — TMS</title>
+  <link rel="stylesheet" href="/static/css/EMPDashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    .query-wrap { max-width:640px; margin:32px auto; }
+    .query-card { background:#fff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 4px 6px -1px rgba(0,0,0,.1); padding:32px 36px; }
+    .query-card h2 { font-size:18px; font-weight:700; color:#0f172a; margin-bottom:6px; }
+    .query-card p.subtitle { font-size:13.5px; color:#64748b; margin-bottom:24px; }
+    .alert-success { display:flex; align-items:center; gap:10px; background:#dcfce7; color:#14532d; border:1px solid #bbf7d0; border-radius:8px; padding:12px 16px; font-size:13.5px; font-weight:500; margin-bottom:20px; }
+    .query-card textarea { width:100%; min-height:140px; border:1px solid #e2e8f0; border-radius:8px; padding:12px 14px; font-size:14px; font-family:'Inter',sans-serif; resize:vertical; outline:none; transition:border-color .15s,box-shadow .15s; color:#0f172a; }
+    .query-card textarea:focus { border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+    .btn-submit { margin-top:16px; padding:11px 24px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s,transform .1s; display:inline-flex; align-items:center; gap:8px; }
+    .btn-submit:hover { background:#6d28d9; }
+    .btn-submit:active { transform:scale(.98); }
+  </style>
+</head>
+<body>
+
+<div class="warning">
+  <p>Please use a larger screen to access the employee dashboard.</p>
+</div>
+
+<section>
+  <div class="sidebar close">
+    <div class="logo">
+      <img class="logo-name" src="/static/IMAGES/mono.jpg" alt="logo" style="height:36px;width:36px;border-radius:50%;object-fit:cover;">
+    </div>
+
+    <ul class="nav-list">
+
+      <li>
+        <div class="icon-link">
+          <a href="{% url 'EMPDashboard' %}"><i class="fa-solid fa-house"></i><span class="link-name">Dashboard</span></a>
+        </div>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'EMPDashboard' %}" class="link-name">Dashboard</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fa-solid fa-list-check"></i><span class="link-name">Tasks</span></a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a href="#" class="link-name">Tasks</a></li>
+          <li><a href="{% url 'EmployeeTask' %}">Task Description</a></li>
+          <li><a href="{% url 'EMPTaskEndDate' %}">Task End Dates</a></li>
+          <li><a href="{% url 'my_tasks' %}">My Tasks</a></li>
+          <li><a href="{% url 'TaskDashboard' %}">Task Stats</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="{% url 'EMPAccount' %}">
+          <i class="fa fa-question-circle"></i>
+          <span class="link-name">Raise Query</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'EMPAccount' %}" class="link-name">Raise Query</a></li>
+        </ul>
+      </li>
+
+      <li>
+        <a href="{% url 'employee_settings' %}">
+          <i class="fa fa-gear"></i>
+          <span class="link-name">Settings</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'employee_settings' %}" class="link-name">Settings</a></li>
+        </ul>
+      </li>
+
+    </ul>
+
+    <div class="profile-details">
+      <div class="profile-content">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-user" style="font-size:15px;color:#c4b5fd;"></i>
+        </div>
+        <div class="name-job" style="margin-left:10px;">
+          <div class="name">{{ employee.name }}</div>
+          <div class="job">{{ employee.designation }}</div>
+        </div>
+      </div>
+      <a href="{% url 'logout' %}"><i class="fas fa-right-from-bracket"></i></a>
+    </div>
+  </div>
+
+  <div class="home-section">
+    <div class="home-content">
+      <i class="fas fa-bars"></i>
+      <span class="text">Raise a Query</span>
+    </div>
+
+    <div class="query-wrap">
+      <div class="query-card">
+        <h2><i class="fa fa-comment-dots" style="color:#7c3aed;margin-right:8px;"></i>Submit Your Query or Feedback</h2>
+        <p class="subtitle">Share any concerns, suggestions, or questions with the admin team.</p>
+
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert-success"><i class="fas fa-circle-check"></i> {{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="{% url 'EMPAccount' %}">
+          {% csrf_token %}
+          <textarea name="message" placeholder="Type your message here..." required></textarea>
+          <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Submit Query</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let btn = document.querySelector(".fa-bars");
+let sidebar = document.querySelector(".sidebar");
+btn.addEventListener("click", () => {
+  sidebar.classList.toggle("close");
+});
+let arrows = document.querySelectorAll(".arrow");
+for (var i = 0; i < arrows.length; i++) {
+  arrows[i].addEventListener("click", (e) => {
+    let arrowParent = e.target.closest("li");
+    arrowParent.classList.toggle("show");
+  });
+}
+</script>
+</body>
+</html>

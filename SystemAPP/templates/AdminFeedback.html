@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Queries — TMS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#f1f5f9; color:#0f172a; min-height:100vh; padding:36px 24px; }
+    .page-wrap { max-width:1040px; margin:0 auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:16px; }
+    .page-header h1 { font-size:22px; font-weight:700; }
+    .back-link { color:#64748b; text-decoration:none; font-size:13.5px; font-weight:500; display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; transition:background .15s; }
+    .back-link:hover { background:#f8fafc; }
+    .summary-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+    .summary-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; }
+    .chip-total { background:#e2e8f0; color:#374151; }
+    .chip-positive { background:#d1fae5; color:#065f46; }
+    .chip-neutral { background:#fef9c3; color:#713f12; }
+    .chip-negative { background:#fee2e2; color:#991b1b; }
+    .card { background:#fff; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06); border:1px solid #e2e8f0; overflow:hidden; }
+    .table-scroll { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:13.5px; }
+    thead th { text-align:left; padding:12px 16px; background:#f8fafc; color:#94a3b8; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
+    tbody td { padding:14px 16px; color:#475569; border-bottom:1px solid #f1f5f9; vertical-align:top; }
+    tbody tr:last-child td { border-bottom:none; }
+    tbody tr:hover { background:#f8fafc; }
+    .emp-name { font-weight:600; color:#0f172a; }
+    .emp-dept { font-size:12px; color:#94a3b8; margin-top:2px; }
+    .message-cell { max-width:380px; line-height:1.5; word-break:break-word; }
+    .row-num { font-size:12.5px; color:#94a3b8; }
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .badge-positive { background:#d1fae5; color:#065f46; }
+    .badge-neutral { background:#fef9c3; color:#713f12; }
+    .badge-negative { background:#fee2e2; color:#991b1b; }
+    .score-val { font-size:11.5px; color:#94a3b8; margin-top:4px; }
+    .date-cell { font-size:13px; color:#64748b; white-space:nowrap; }
+    .empty-state { text-align:center; padding:60px 20px; color:#94a3b8; }
+    .empty-state i { font-size:40px; margin-bottom:12px; display:block; color:#e2e8f0; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><i class="fas fa-comments" style="color:#4f46e5;margin-right:10px;"></i>Employee Queries &amp; Feedback</h1>
+    <a href="{% url 'AdminDashboard' %}" class="back-link"><i class="fas fa-arrow-left"></i> Dashboard</a>
+  </div>
+
+  {% if feedbacks %}
+  <div class="summary-bar">
+    <span class="summary-chip chip-total"><i class="fas fa-layer-group"></i> Total: {{ counts.total }}</span>
+    <span class="summary-chip chip-positive"><i class="fas fa-arrow-trend-up"></i> Positive: {{ counts.positive }}</span>
+    <span class="summary-chip chip-neutral"><i class="fas fa-minus"></i> Neutral: {{ counts.neutral }}</span>
+    <span class="summary-chip chip-negative"><i class="fas fa-arrow-trend-down"></i> Negative: {{ counts.negative }}</span>
+  </div>
+
+  <div class="card">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Employee</th>
+            <th>Message</th>
+            <th>Sentiment</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for feedback in feedbacks %}
+          <tr>
+            <td class="row-num">{{ forloop.counter }}</td>
+            <td>
+              <div class="emp-name">{{ feedback.employee.name }}</div>
+              <div class="emp-dept">{{ feedback.employee.department }}</div>
+            </td>
+            <td class="message-cell">{{ feedback.message }}</td>
+            <td>
+              {% if feedback.sentiment_label == "Positive" %}
+                <span class="badge badge-positive"><i class="fas fa-arrow-up"></i> Positive</span>
+              {% elif feedback.sentiment_label == "Negative" %}
+                <span class="badge badge-negative"><i class="fas fa-arrow-down"></i> Negative</span>
+              {% else %}
+                <span class="badge badge-neutral"><i class="fas fa-minus"></i> Neutral</span>
+              {% endif %}
+              <div class="score-val">Score: {{ feedback.sentiment_score|floatformat:2 }}</div>
+            </td>
+            <td class="date-cell">{{ feedback.created_at|date:"M d, Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="card">
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>No employee queries yet.</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

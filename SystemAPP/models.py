@@ -117,3 +117,12 @@ class PasswordChangeRequest(models.Model):
 
     def __str__(self):
         return f"{self.employee.name} - {self.status}"
+class EmployeeFeedback(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    message = models.TextField()
+    sentiment_score = models.FloatField(default=0.0)
+    sentiment_label = models.CharField(max_length=20, default="Neutral")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.employee.name} - {self.sentiment_label}"

@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/home.css">
-    <link rel="shortcut icon" href="/static/IMAGES/logo.png" type="image/x-icon">
-    <title>TMS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/home.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <link rel="shortcut icon" href="/static/IMAGES/logo.png" type="image/x-icon">
+  <title>TMS — Task Management System</title>
 </head>
-
 <body>
-    <div class="banner">
-        {% include "Nav.html" %}
-        <div class="content">
-            <h1>Manage Work Together.</h1>
-        </div>
-        <a href="{% url 'Developers' %}" class="developer-icon" title="Developers">
-            <img src="/static/IMAGES/developer.png" alt="Developers">
-        </a>
-    </div>
-</body>
+  <div class="banner">
+    {% include "Nav.html" %}
 
+    <div class="content">
+      <h1>Manage Work<br>Together.</h1>
+      <p>Streamline task assignment, track progress, and boost team productivity — all in one place.</p>
+      <div class="content-actions">
+        <a href="{% url 'employeesignuplogin' %}" class="btn-hero-primary"><i class="fas fa-arrow-right-to-bracket"></i> Employee Login</a>
+        <a href="{% url 'ADMINLOGIN' %}" class="btn-hero-outline"><i class="fas fa-shield-halved"></i> Admin Login</a>
+      </div>
+    </div>
+
+    <a href="{% url 'Developers' %}" class="developer-icon" title="Meet the Developers">
+      <img src="/static/IMAGES/developer.png" alt="Developers">
+    </a>
+  </div>
+</body>
 </html>

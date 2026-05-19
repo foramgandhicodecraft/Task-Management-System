@@ -1,202 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard </title>
-    {% comment %} <link rel="stylesheet" href="/static/css/style.css"> {% endcomment %}
-    <link rel="stylesheet" href="/static/css/admindashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/css/admindashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 </head>
 <body>
 
-    <section>
-  
-    <div class="sidebar close">
-      <div class="logo">
-        <i class="fab fa-trade-federation"></i>
-        <span class="logo-name">Operations</span>
-      </div>
+<section>
+  <div class="sidebar close">
+    <div class="logo">
+      <i class="fas fa-layer-group"></i>
+      <span class="logo-name">Operations</span>
+    </div>
 
-      <ul class="nav-list">
+    <ul class="nav-list">
 
-        <li>
-          <div class="icon-link">
-            <a href="#">
-                <i class="fa-regular fa-building"></i>
-              <span class="link-name">Department</span>
-            </a>
-            <i class="fas fa-caret-down arrow"></i>
-          </div>
-
-          <ul class="sub-menu">
-            <li><a href="#" class="link-name">Department</a></li>
-            <li><a href={% url "REGIDMENT" %}>Add</a></li>
-          </ul>
-        </li>
-
-        <li>
-          <div class="icon-link">
-            <a href="#">
-                <i class="fa-regular fa-circle-user"></i>
-              <span class="link-name">Employee</span>
-            </a>
-            <i class="fas fa-caret-down arrow"></i>
-          </div>
-
-          <ul class="sub-menu">
-            <li><a href="#" class="link-name">Employee</a></li>
-            <li><a href={% url "REGIEMP" %}>Add</a></li>
-          </ul>
-        </li>
-
-
-        <li>
-          <div class="icon-link" >
-          <a href="#">
-            <i class="fa-solid fa-list-check"></i>
-            <span class="link-name">Task</span>
-          </a>
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fa-regular fa-building"></i><span class="link-name">Department</span></a>
           <i class="fas fa-caret-down arrow"></i>
-          </div>
-           
-          <ul class="sub-menu">
-            <a href="#">
-              <span class="link-name">Task</span>
-            </a>
-            <li><a href="{% url "task_des" %}" >Task description </a></li>
-            <li><a href="{% url "assign_task" %}" >Assign Task</a></li>
-            <li><a href={% url "assigned_tasks" %} >Assigned Task List</a></li>
-            <li><a href={% url "task_end_dates" %} >Task end date</a></li>
-          </ul>
-        </li>
+        </div>
+        <ul class="sub-menu">
+          <li><a href="#" class="link-name">Department</a></li>
+          <li><a href="{% url 'REGIDMENT' %}">Add Department</a></li>
+          <li><a href="{% url 'Dlist' %}">View All</a></li>
+        </ul>
+      </li>
 
-        <li>
-          <div class="icon-link">
-            <a href="#">
-              <i class="fas fa-laptop-code"></i>
-              <span class="link-name">Management</span>
-            </a>  
-            <i class="fas fa-caret-down arrow"></i>
-          </div>
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fa-regular fa-circle-user"></i><span class="link-name">Employee</span></a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a href="#" class="link-name">Employee</a></li>
+          <li><a href="{% url 'REGIEMP' %}">Add Employee</a></li>
+          <li><a href="{% url 'employee_list' %}">View All</a></li>
+        </ul>
+      </li>
 
-          <ul class="sub-menu">
-            <li><a href="#" class="link-name">Management</a></li>
-            <li><a href={% url "employee_list" %}>Employee Management</a></li>
-            <li><a href={% url "Dlist" %}>Department Management</a></li>
-            <li><a href="{% url 'password_requests' %}">Password Change Pending Requests</a></li>
-          </ul>
-        </li>
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fa-solid fa-list-check"></i><span class="link-name">Tasks</span></a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a href="#" class="link-name">Tasks</a></li>
+          <li><a href="{% url 'task_des' %}">Task Description</a></li>
+          <li><a href="{% url 'assign_task' %}">Assign Task</a></li>
+          <li><a href="{% url 'assigned_tasks' %}">Assigned Task List</a></li>
+          <li><a href="{% url 'task_end_dates' %}">Task End Dates</a></li>
+        </ul>
+      </li>
 
+      <li>
+        <div class="icon-link">
+          <a href="#"><i class="fas fa-laptop-code"></i><span class="link-name">Management</span></a>
+          <i class="fas fa-caret-down arrow"></i>
+        </div>
+        <ul class="sub-menu">
+          <li><a href="#" class="link-name">Management</a></li>
+          <li><a href="{% url 'employee_list' %}">Employee Management</a></li>
+          <li><a href="{% url 'Dlist' %}">Department Management</a></li>
+          <li><a href="{% url 'password_requests' %}">Password Requests</a></li>
+        </ul>
+      </li>
 
-        <li>
-          <a href="{% url "TaskReport" %}">
-            <i class="fa-solid fa-pen-to-square"></i>
-            <span class="link-name">Task report</span>
-          </a>
+      <li>
+        <a href="{% url 'admin_feedback' %}">
+          <i class="fa fa-comments"></i>
+          <span class="link-name">Employee Queries</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'admin_feedback' %}" class="link-name">Employee Queries</a></li>
+        </ul>
+      </li>
 
-          <ul class="sub-menu blank">
-            <li><a href="#" class="link-name">Task report</a></li>
-          </ul>
-        </li>
+      <li>
+        <a href="{% url 'TaskReport' %}">
+          <i class="fa-solid fa-chart-bar"></i>
+          <span class="link-name">Task Report</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'TaskReport' %}" class="link-name">Task Report</a></li>
+        </ul>
+      </li>
 
-        <li>
-          <a href="{% url 'admin_settings' %}">
-            <i class="fas fa-gear"></i>
-            <span class="link-name">Settings</span>
-          </a>
+      <li>
+        <a href="{% url 'admin_settings' %}">
+          <i class="fas fa-gear"></i>
+          <span class="link-name">Settings</span>
+        </a>
+        <ul class="sub-menu blank">
+          <li><a href="{% url 'admin_settings' %}" class="link-name">Settings</a></li>
+        </ul>
+      </li>
 
-          <ul class="sub-menu blank">
-            <li><a href="{% url 'admin_settings' %}" class="link-name">Settings</a></li>
-          </ul>
-        </li>
+    </ul>
 
-        <li>
-          <div class="profile-details">
-            <div class="profile-content">
-             
-            </div>
+    <div class="profile-details">
+      <div class="profile-content">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(79,70,229,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fas fa-user-shield" style="font-size:15px;color:#a5b4fc;"></i>
+        </div>
+        <div class="name-job" style="margin-left:10px;">
+          <div class="name">Admin</div>
+          <div class="job">{{ request.session.admin_email }}</div>
+        </div>
+      </div>
+      <a href="{% url 'logout' %}"><i class="fas fa-right-from-bracket"></i></a>
+    </div>
+  </div>
 
-<!-- Check if admin_email exists before displaying it -->
-            <div class="name-job">
-                <div class="name">Admin</div>
-                <div class="job">{{ request.session.admin_email }}</div>
-            </div>
-            <a href="{% url 'logout' %}" style="background-color:white;"><i class="fas fa-right-to-bracket" ></i></a>
-          </div>
-        </li>
-      </ul>
+  <div class="home-section">
+    <div class="home-content">
+      <i class="fas fa-bars"></i>
+      <span class="text">Admin Dashboard</span>
     </div>
 
-    <div class="home-section">
-      <div class="home-content">
-        <i class="fas fa-bars"></i>
-        <span class="text">Admin Dashboard</span>
+    <div class="dashboard">
+      <div class="dash-welcome">
+        <div class="dash-welcome-left">
+          <div class="welcome-label">Welcome back</div>
+          <div class="welcome-title">Admin Dashboard</div>
+          <div class="welcome-sub">Here's what's happening across your organization.</div>
+        </div>
+        <div class="dash-welcome-icon"><i class="fas fa-shield-halved"></i></div>
+      </div>
+      <h2 class="heading">Overview</h2>
+      <div class="color-box">
+        <div class="box pink">
+          <i class="fa fa-building"></i>
+          <p>Total Departments</p>
+          <h3>{{ total_departments }}</h3>
+        </div>
+        <div class="box orange">
+          <i class="fa fa-users"></i>
+          <p>Total Employees</p>
+          <h3>{{ total_employees }}</h3>
+        </div>
+        <div class="box green">
+          <i class="fa fa-hourglass-half"></i>
+          <p>In Progress Tasks</p>
+          <h3>{{ assigned_tasks_count }}</h3>
+        </div>
+        <div class="box blue">
+          <i class="fa fa-check-circle"></i>
+          <p>Completed Tasks</p>
+          <h3>{{ finished_tasks_count }}</h3>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px;">
+
+        <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.07);">
+          <p style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px;">Task Status</p>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#8b5cf6;display:inline-block;"></span>In Progress</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ assigned_tasks_count }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:60%;background:linear-gradient(90deg,#8b5cf6,#6d28d9);border-radius:99px;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;"></span>Completed</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ finished_tasks_count }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:40%;background:linear-gradient(90deg,#10b981,#059669);border-radius:99px;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                <span style="font-size:13px;font-weight:600;color:#475569;display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:50%;background:#06b6d4;display:inline-block;"></span>Departments</span>
+                <span style="font-size:18px;font-weight:700;color:#0f172a;">{{ total_departments }}</span>
+              </div>
+              <div style="height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:70%;background:linear-gradient(90deg,#06b6d4,#0891b2);border-radius:99px;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.07);">
+          <p style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;">Quick Actions</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+            <a href="{% url 'REGIEMP' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;transition:background .15s;"><i class="fas fa-user-plus" style="color:#4f46e5;"></i>Add Employee</a>
+            <a href="{% url 'REGIDMENT' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;"><i class="fas fa-building" style="color:#4f46e5;"></i>Add Dept.</a>
+            <a href="{% url 'assign_task' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;"><i class="fas fa-list-check" style="color:#4f46e5;"></i>Assign Task</a>
+            <a href="{% url 'password_requests' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;"><i class="fas fa-key" style="color:#4f46e5;"></i>Passwords</a>
+            <a href="{% url 'admin_feedback' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;"><i class="fas fa-comments" style="color:#4f46e5;"></i>Queries</a>
+            <a href="{% url 'TaskReport' %}" style="display:flex;align-items:center;gap:9px;padding:11px 13px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;text-decoration:none;color:#0f172a;font-size:12.5px;font-weight:600;"><i class="fas fa-chart-bar" style="color:#4f46e5;"></i>Task Report</a>
+          </div>
+        </div>
+
       </div>
     </div>
+  </div>
+</section>
 
-
-        <!-- User Top Naviagation Starts from Here -->
-        
-
-            <!-- User Dashboard Starts from Here -->
-            <div class="dashboard">
-                <h2 class="heading">Dashboard </h2>
-                <div class="color-box">
-                    <div class="box pink">
-                        <p> <i class="fa fa-building-o" aria-hidden="true"></i> </p>
-                        <p> Total department </p>
-                        <h3> {{ total_departments }}</h3>
-                    </div>
-                    <div class="box orange">
-                        <p> <i class="fa fa-users" aria-hidden="true"></i> </p>
-                        <p> Total Employees </p>
-                        <h3>{{ total_employees }} </h3>
-                    </div>
-                    <div class="box green">
-                        <p> <i class="fa fa-area-chart" aria-hidden="true"></i> </p>
-                        <p> In progress Task </p>
-                        <h3> {{assigned_tasks_count}}</h3>
-                    </div>
-                    <div class="box blue">
-                        <p> <i class="fa fa-tasks" aria-hidden="true"></i> </p>
-                        <p> completed Task </p>
-                        <h3>{{finished_tasks_count}}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</body>
 <script>
-    /* Created by Tivotal */
+const btn = document.querySelector(".fa-bars");
+const sidebar = document.querySelector(".sidebar");
+btn.addEventListener("click", () => sidebar.classList.toggle("close"));
 
-let btn = document.querySelector(".fa-bars");
-let sidebar = document.querySelector(".sidebar");
-
-btn.addEventListener("click", () => {
-  sidebar.classList.toggle("close");
-});
-
-let arrows = document.querySelectorAll(".arrow");
-for (var i = 0; i < arrows.length; i++) {
-  arrows[i].addEventListener("click", (e) => {
-    let arrowParent = e.target.parentElement.parentElement;
-
-    arrowParent.classList.toggle("show");
+document.querySelectorAll(".arrow").forEach(arrow => {
+  arrow.addEventListener("click", e => {
+    e.target.closest("li").classList.toggle("show");
   });
-}
-    const hamburger = document.getElementById('menu');
-    const navigation = document.getElementById('navigation');
-    hamburger.addEventListener('click', function () {
-        navigation.classList.toggle('active')
-        console.log('clicked');
-    })
+});
 </script>
-
+</body>
 </html>

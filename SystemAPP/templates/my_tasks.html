@@ -1,121 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Tasks</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 30px;
-            border-radius: 10px;
-            background-color: #fff;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            font-size: 36px;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 30px;
-            color: #007bff;
-        }
-        .task-list { list-style-type: none; padding: 0; }
-        .task-item {
-            margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #f1f1f1;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            animation: fadeInUp 0.5s ease;
-        }
-        .task-item:hover { transform: translateY(-5px); }
-        .task-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #333; }
-        .task-icon { font-size: 32px; color: #007bff; margin-right: 10px; }
-        .task-info { font-size: 18px; color: #555; margin-bottom: 5px; }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .status-pending { background-color: #ffc107; color: #333; }
-        .status-inprogress { background-color: #17a2b8; color: #fff; }
-        .status-completed { background-color: #28a745; color: #fff; }
-        .status-form { margin-top: 15px; display: flex; align-items: center; gap: 10px; }
-        .status-form select {
-            padding: 6px 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-        .status-form button {
-            padding: 6px 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .status-form button:hover { background-color: #0056b3; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tasks</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#f5f3ff; color:#0f172a; min-height:100vh; padding:36px 24px; }
+    .page-wrap { max-width:800px; margin:0 auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .page-header h1 { font-size:22px; font-weight:700; }
+    .back-link { color:#64748b; text-decoration:none; font-size:13.5px; font-weight:500; display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; transition:background .15s; }
+    .back-link:hover { background:#f8fafc; }
+    .summary-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#ede9fe; color:#5b21b6; border-radius:20px; font-size:13px; font-weight:600; margin-bottom:24px; }
+    .task-card { background:#fff; border-radius:10px; border:1px solid #e2e8f0; padding:20px 22px; box-shadow:0 1px 3px rgba(0,0,0,.07); margin-bottom:14px; transition:box-shadow .2s; }
+    .task-card:hover { box-shadow:0 4px 14px rgba(0,0,0,.1); }
+    .task-card-top { display:flex; align-items:flex-start; gap:14px; margin-bottom:12px; }
+    .task-icon-wrap { width:38px; height:38px; border-radius:8px; background:#ede9fe; display:flex; align-items:center; justify-content:center; color:#7c3aed; font-size:15px; flex-shrink:0; }
+    .task-title { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:4px; }
+    .task-desc { font-size:13px; color:#64748b; line-height:1.5; }
+    .task-meta { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .badge-deadline { background:#fef3c7; color:#92400e; }
+    .badge-Pending { background:#fef9c3; color:#713f12; }
+    .badge-In-Progress { background:#dbeafe; color:#1e40af; }
+    .badge-Completed { background:#dcfce7; color:#14532d; }
+    .task-divider { height:1px; background:#f1f5f9; margin-bottom:14px; }
+    .status-form { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .status-form label { font-size:13px; font-weight:600; color:#475569; }
+    .status-select { padding:7px 10px; border:1px solid #e2e8f0; border-radius:6px; font-size:13px; color:#0f172a; font-family:'Inter',sans-serif; background:#fff; outline:none; cursor:pointer; transition:border-color .15s; }
+    .status-select:focus { border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+    .btn-update { padding:7px 16px; background:#7c3aed; color:#fff; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; transition:background .15s,transform .1s; display:inline-flex; align-items:center; gap:6px; }
+    .btn-update:hover { background:#6d28d9; }
+    .btn-update:active { transform:scale(.98); }
+    .empty-state { text-align:center; padding:60px 20px; color:#94a3b8; background:#fff; border-radius:12px; border:1px solid #e2e8f0; }
+    .empty-state i { font-size:40px; margin-bottom:12px; display:block; color:#e2e8f0; }
+  </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <h1>My Tasks</h1>
-        {% if tasks %}
-            <p class="text-center text-muted">Number of tasks: {{ tasks|length }}</p>
-            <ul class="task-list">
-                {% for task in tasks %}
-                <li class="task-item">
-                    <div class="d-flex align-items-start">
-                        <i class="fas fa-tasks task-icon mt-1"></i>
-                        <div class="w-100">
-                            <p class="task-title">{{ task.title }}</p>
-                            <p class="task-info"><strong>Description:</strong> {{ task.description }}</p>
-                            <p class="task-info"><strong>Due Date:</strong> {{ task.due_date }}</p>
-                            <p class="task-info">
-                                <strong>Status:</strong>
-                                <span class="status-badge
-                                    {% if task.status == 'Pending' %}status-pending
-                                    {% elif task.status == 'In Progress' %}status-inprogress
-                                    {% else %}status-completed{% endif %}">
-                                    {{ task.status }}
-                                </span>
-                            </p>
-                            <form class="status-form" method="POST" action="{% url 'update_status' task.id %}">
-                                {% csrf_token %}
-                                <label><strong>Update Status:</strong></label>
-                                <select name="status">
-                                    <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
-                                    <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-                                    <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
-                                </select>
-                                <button type="submit">Update</button>
-                            </form>
-                        </div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="text-center text-muted">No tasks found for you.</p>
-        {% endif %}
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><i class="fas fa-clipboard-list" style="color:#7c3aed;margin-right:10px;"></i>My Tasks</h1>
+    <a href="{% url 'EMPDashboard' %}" class="back-link"><i class="fas fa-arrow-left"></i> Dashboard</a>
+  </div>
+
+  {% if tasks %}
+  <div class="summary-chip"><i class="fas fa-layer-group"></i> {{ tasks|length }} task{{ tasks|length|pluralize }}</div>
+
+    {% for task in tasks %}
+    <div class="task-card">
+      <div class="task-card-top">
+        <div class="task-icon-wrap"><i class="fas fa-tasks"></i></div>
+        <div>
+          <div class="task-title">{{ task.title }}</div>
+          <div class="task-desc">{{ task.description }}</div>
+        </div>
+      </div>
+
+      <div class="task-meta">
+        <span class="badge badge-deadline"><i class="fas fa-calendar-alt"></i> Due: {{ task.due_date }}</span>
+        <span class="badge badge-{{ task.status|cut:' ' }}"><i class="fas fa-tag"></i> {{ task.status }}</span>
+      </div>
+
+      <div class="task-divider"></div>
+
+      <form class="status-form" method="POST" action="{% url 'update_status' task.id %}">
+        {% csrf_token %}
+        <label>Update Status:</label>
+        <select name="status" class="status-select">
+          <option value="Pending" {% if task.status == 'Pending' %}selected{% endif %}>Pending</option>
+          <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+          <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+        </select>
+        <button type="submit" class="btn-update"><i class="fas fa-check"></i> Update</button>
+      </form>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    {% endfor %}
+
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-inbox"></i>
+    <p>No tasks assigned to you yet.</p>
+  </div>
+  {% endif %}
+</div>
+
 </body>
 </html>

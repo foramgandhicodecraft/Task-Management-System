@@ -1,146 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% comment %} <link rel="stylesheet" href="/static/css/taskemployeelist.css"> {% endcomment %}
-    <title>Task Description</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Descriptions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:#f1f5f9; color:#0f172a; min-height:100vh; padding:36px 24px; }
+    .page-wrap { max-width:960px; margin:0 auto; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+    .page-header h1 { font-size:22px; font-weight:700; }
+    .back-link { color:#64748b; text-decoration:none; font-size:13.5px; font-weight:500; display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; transition:background .15s; }
+    .back-link:hover { background:#f8fafc; }
+    .employee-section { margin-bottom:28px; }
+    .emp-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .emp-avatar { width:42px; height:42px; border-radius:50%; background:#e0e7ff; display:flex; align-items:center; justify-content:center; color:#4f46e5; font-size:17px; font-weight:700; flex-shrink:0; }
+    .emp-info h2 { font-size:17px; font-weight:700; color:#0f172a; }
+    .emp-info .task-count { font-size:12.5px; color:#94a3b8; font-weight:500; }
+    .task-card { background:#fff; border-radius:10px; border:1px solid #e2e8f0; padding:20px 22px; box-shadow:0 1px 3px rgba(0,0,0,.07); margin-bottom:12px; transition:box-shadow .2s; }
+    .task-card:hover { box-shadow:0 4px 12px rgba(0,0,0,.1); }
+    .task-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .task-card h3 i { color:#4f46e5; font-size:14px; }
+    .task-meta { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; }
+    .meta-item { display:flex; align-items:center; gap:6px; font-size:13px; color:#475569; }
+    .meta-item strong { color:#0f172a; font-weight:600; }
+    .desc-text { font-size:13.5px; color:#475569; line-height:1.6; margin-top:8px; padding:10px 14px; background:#f8fafc; border-radius:6px; border-left:3px solid #4f46e5; }
+    .task-divider { height:1px; background:#f1f5f9; margin:10px 0; }
+    .deadline-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; background:#fef3c7; color:#92400e; border-radius:20px; font-size:12px; font-weight:600; }
+    .empty-state { text-align:center; padding:60px 20px; color:#94a3b8; background:#fff; border-radius:12px; border:1px solid #e2e8f0; }
+    .empty-state i { font-size:40px; margin-bottom:12px; display:block; color:#e2e8f0; }
+  </style>
 </head>
-<style>
-.container {
-    display:flex-box;
-    flex-direction: column;
-}
-
-.user-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-
-.finish-icon {
-    margin-left: auto; /* Aligns the finished image to the right */
-}
-
-.finish-icon img {
-    width: 20px;
-    height: 20px;
-}
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000000;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            margin: 0 auto;
-            padding: 10px;
-            width:90%;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            padding: 10px;
-            color: #ffffff;
-        }
-        h2{
-            border:2px solid black;
-            border-radius:40px;
-            background-color:black;
-            color:white;
-            text-align:center;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align:center;
-        }
-
-        li {
-            margin:10px;
-            padding: 20px;
-            width:40%;
-            height:auto;
-            text-align: left;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            box-shadow: 0 26px 58px 0 rgba(0, 0, 0, .22), 0 5px 14px 0 rgba(0, 0, 0, .18);
-        }
-        hr{
-            height: 1px;
-  background: black;
-  border: none;
-  outline: none;
-  margin: 3em 3em 5em;
-  position: relative;
-  
-  &:before {
-    
-    content: attr(data-symbol);
-    position: absolute;
-    top: 0;
-    left: 50%;
-    background: black;
-    color: white;
-    padding: 0.5em 3em;
-    @include transform(translate(-50%, -50%));
-    
-  }
-
-        }
-        
-hr#two {
-  @include background-image(linear-gradient(left, black, white));
-  
-  &:before {
-    left: 90%;
-    width: 20%;
-    padding: 1em;
-    top: 1px;
-  }
-}
-
-        li:hover {
-            background-color: #e9e9e9;
-        }
-
-        .task-details {
-            font-size: 16px;
-            margin-top: 10px;
-            color: #666;
-        }
-        
-
-</style>
 <body>
-    <h1>Tasks Description</h1>
-<div class="container">
-    <ul class="task-list" style="display:block; width:100%;">
-        <!-- Inside your template -->
-        {% for employee in employees %}
-        <li style="display:inline-block;">
-            <h2>{{ employee.name }}</h2>
-            <p>Number of tasks: {{ employee.task_count }}</p>
-            <div class="task-details">
-                {% for task in employee.task_set.all %}
-                    {% csrf_token %}
-                    <!-- Pass the email as a hidden input field -->
-                    <input type="hidden" name="email" value="{{ employee.email }}">
-                    <p style="color:black;"><strong>Task:</strong> {{ task.title }}</p>
-                    <p  style="color:black;"><strong>Description:</strong> {{ task.description }}</p>
-                    <p  style="color:black;"><strong>Deadline:</strong> {{ task.due_date }} {{ task.deadline_time }}</p>
-                    <hr id="two" data-symbol="✈">
-                {% endfor %}
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1><i class="fas fa-file-alt" style="color:#4f46e5;margin-right:10px;"></i>Task Descriptions</h1>
+    <a href="{% url 'AdminDashboard' %}" class="back-link"><i class="fas fa-arrow-left"></i> Dashboard</a>
+  </div>
+
+  {% for employee in employees %}
+  <div class="employee-section">
+    <div class="emp-header">
+      <div class="emp-avatar">{{ employee.name|first }}</div>
+      <div class="emp-info">
+        <h2>{{ employee.name }}</h2>
+        <div class="task-count">{{ employee.task_count }} task{{ employee.task_count|pluralize }} assigned</div>
+      </div>
+    </div>
+
+    {% for task in employee.task_set.all %}
+    <div class="task-card">
+      <h3><i class="fas fa-circle-dot"></i>{{ task.title }}</h3>
+      <div class="desc-text">{{ task.description }}</div>
+      <div class="task-meta">
+        <span class="deadline-badge"><i class="fas fa-calendar-alt"></i> Due: {{ task.due_date }}{% if task.deadline_time %} at {{ task.deadline_time }}{% endif %}</span>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state"><i class="fas fa-inbox"></i><p>No active tasks.</p></div>
+    {% endfor %}
+  </div>
+  {% empty %}
+  <div class="empty-state"><i class="fas fa-users"></i><p>No employees with assigned tasks.</p></div>
+  {% endfor %}
 </div>
 
 </body>

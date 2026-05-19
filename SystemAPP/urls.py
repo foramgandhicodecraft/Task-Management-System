@@ -38,4 +38,5 @@ urlpatterns = [
     path("password-requests/", views.password_requests, name="password_requests"),
     path("approve-password/<int:req_id>/", views.approve_password, name="approve_password"),
     path("reject-password/<int:req_id>/", views.reject_password, name="reject_password"),
+    path("admin-feedback/", views.admin_feedback, name="admin_feedback"),
 ]
