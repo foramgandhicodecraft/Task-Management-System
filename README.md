@@ -4,12 +4,6 @@ A web-based task management application built with Python and Django. It lets ad
 
 ---
 
-## Author
-
-**Akshit Sheel**
-
----
-
 ## What This Project Does
 
 Managing tasks across a team can get messy quickly. This system gives:
