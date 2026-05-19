@@ -65,8 +65,8 @@
             </div>
 
             <div class="name-job">
-            <div class="name">{{ request.session.EmployeeUsername }}</div>
-            <div class="job">{{ request.session.EmployeeEmail }}</div>
+            <div class="name">{{ employee.name }}</div>
+            <div class="job">{{ employee.designation }} | {{ employee.department }}</div>
             </div>
             <a href="{% url 'logout' %}"><i class="fas fa-right-to-bracket" ></i></a>
             </div>

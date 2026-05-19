@@ -196,8 +196,11 @@ def EMPDASHBOARD(request):
         email = request.session.get("EmployeeEmail")
 
         if email:
-            # Filter tasks by assigned_to email
-            tasks = Task.objects.filter(assigned_to__email=email)
+            # Lookup the Employee object
+            employee = Employee.objects.filter(newemail=email).first()
+
+            # Filter tasks by assigned_to newemail
+            tasks = Task.objects.filter(assigned_to__newemail=email)
 
             # Get total number of tasks
             total_tasks = tasks.count()
@@ -217,6 +220,7 @@ def EMPDASHBOARD(request):
                 'total_tasks': total_tasks,
                 'in_progress_tasks': in_progress_tasks,
                 'completed_tasks': completed_tasks,
+                'employee': employee,
             })
         else:
             # Handle the case where email is not found in the session
